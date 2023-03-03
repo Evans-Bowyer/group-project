@@ -130,3 +130,6 @@ dmypy.json
 
 # Intellij Stuff
 .idea/
+
+# temporary files
+*.swp
