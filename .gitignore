@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Intellij Stuff
+.idea/
+
+# temporary files
+*.swp
