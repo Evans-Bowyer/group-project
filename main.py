@@ -7,21 +7,32 @@ class MyWidget(wdgt.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.button = wdgt.QPushButton("Confirm")
-        self.text = wdgt.QLabel("Hello, World!", alignment=qt.Qt.AlignCenter)
+        years = ["2013", "2014", "2015", "2016",
+                "2017", "2018", "2019", "2020"]
+        pollutants = [
 
+        # define menu to select chemical to show data for
+        self.chem_menu = wdgt.QComboBox()
+
+        # define menu to select year to show
+        self.year_menu = wdgt.QComboBox()
+        self.year_menu.addItems(years)
+        # TODO: figure out how to manipulate size and position of widgets
+
+        # button to confirm choice and reload map
+        self.button = wdgt.QPushButton("Confirm")
+
+        # add widgets to display
         self.layout = wdgt.QVBoxLayout(self)
-        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.year_menu)
         self.layout.addWidget(self.button)
 
-        self.button.clicked.connect(self.change_yr)
+        self.button.clicked.connect(self.reload_display)
 
     @qt.Slot()
-    def change_yr(self):
+    def reload_display(self):
+        #TODO: write function to reload data on button press
         self.text.setText("It works!")
-
-#   def make_list(items, position): 
-        
 
 if __name__ == "__main__" :
     app = wdgt.QApplication([])
