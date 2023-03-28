@@ -65,11 +65,11 @@ def runall():
                 [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
                 [sg.Button('Next', pad=((figure_w / 2, 0), 3), size=(4, 2)), sg.Button('Exit', pad=((figure_w / 2, 0), 3), size=(4, 2))]],
     window = sg.Window('Air Pollution', layout, force_toplevel=True,
-                       finalize=True)
+                       finalize=True, enable_close_attempted_event=True)
     fig_photo = draw_figure(window['canvas'].TKCanvas, fig)
     event, values = window.read()
     while event:
-        if event == sg.WIN_CLOSED or event == 'Exit':
+        if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
             exit()
         if event == 'Next':
             break
