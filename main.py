@@ -37,8 +37,6 @@ class MyWidget(wdgt.QWidget):
         
         # TODO figure out how we will display the data
 
-        # TODO 
-
         # add widgets to display
         self.layout = wdgt.QVBoxLayout(self)
         self.layout.addWidget(self.year_menu)
