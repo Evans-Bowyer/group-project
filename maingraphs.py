@@ -117,6 +117,7 @@ def runcode():
             x_axis = files[i]['No']
             y_axis = files[i][airp]
             plt.stem(x_axis, y_axis, markerfmt=" ")
+            plt.title("3/1/2013 - 2/28/2017")
             plt.xlabel("Hours since March 1st 2013")
             plt.ylabel(airp)
             runall()
@@ -128,8 +129,10 @@ def runcode():
         x_axis = file1['No']
         y_axis = file1[airp]
         plt.stem(x_axis, y_axis, markerfmt=" ")
+        plt.title("3/1/2013 - 2/28/2017")
         plt.xlabel("Hours since March 1st 2013")
         plt.ylabel(airp)
+        # TODO Going to try to condense labels into weeks or months (something larger than hours)
         run()
         plt.clf()
 
