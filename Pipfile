@@ -8,7 +8,7 @@ matplotlib = "*"
 netcdf4 = "*"
 numpy = "*"
 pandas = "*"
-pyside6 = "*"
+pysimplegui = "*"
 
 [dev-packages]
 ipython = "*"
