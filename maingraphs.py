@@ -1,93 +1,91 @@
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
-import pandas as pd
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
+
 # Selects a PySimpleGUI theme.
 sg.theme('DarkTeal2')
 
-# Initializes all the necessary variables.
-airp = None
-city = None
-cityname = None
-file1 = pd.read_csv('Graphdata/PRSA_Data_Aotizhongxin_20130301-20170228.csv')
-file2 = pd.read_csv('Graphdata/PRSA_Data_Changping_20130301-20170228.csv')
-file3 = pd.read_csv('Graphdata/PRSA_Data_Dingling_20130301-20170228.csv')
-file4 = pd.read_csv('Graphdata/PRSA_Data_Dongsi_20130301-20170228.csv')
-file5 = pd.read_csv('Graphdata/PRSA_Data_Guanyuan_20130301-20170228.csv')
-file6 = pd.read_csv('Graphdata/PRSA_Data_Gucheng_20130301-20170228.csv')
-file7 = pd.read_csv('Graphdata/PRSA_Data_Huairou_20130301-20170228.csv')
-file8 = pd.read_csv('Graphdata/PRSA_Data_Nongzhanguan_20130301-20170228.csv')
-file9 = pd.read_csv('Graphdata/PRSA_Data_Shunyi_20130301-20170228.csv')
-file10 = pd.read_csv('Graphdata/PRSA_Data_Tiantan_20130301-20170228.csv')
-file11 = pd.read_csv('Graphdata/PRSA_Data_Wanliu_20130301-20170228.csv')
-file12 = pd.read_csv('Graphdata/PRSA_Data_Wanshouxigong_20130301-20170228.csv')
-
-# Initializes all the necessary lists.
-selection = (
-    'All', 'Aotizhongxin', 'Changping', 'Dingling', 'Dongsi', 'Guanyuan', 'Gucheng',
-    'Huairou', 'Nongzhanguan', 'Shunyi', 'Tiantan', 'Wanliu', 'Wanshouxigong')
-types = (
-    'SO2', 'NO2', 'CO', 'O3')
-files = (file1, file2, file3, file4, file5, file6, file7, file8, file9, file10, file11, file12)
-
-
 # Creates a GUI that accepts user input using PySimpleGUI.
 def main():
+
+    # Initialize neccessary lists
+    selection = (
+            'All', 'Aotizhongxin', 'Changping', 'Dingling', 'Dongsi', 'Guanyuan',
+            'Gucheng', 'Huairou', 'Nongzhanguan', 'Shunyi', 'Tiantan', 'Wanliu', 
+            'Wanshouxigong'
+            )
+    types = ('SO2', 'NO2', 'CO', 'O3')
+
     width = max(map(len, selection)) + 1
     matplotlib.use('TkAgg')
+
+    # define GUI elements and window
     layout = [
         [sg.Text('Graph:')],
+
         [sg.Text('Select Air Pollutant:', size=(17, 1)),
          sg.Combo(types, size=(width, 5), enable_events=False, key='-type-')],
+
         [sg.Text('Select City:', size=(17, 1)),
          sg.Combo(selection, size=(width, 5), enable_events=False, key='-city-')],
+
         [sg.Submit(), sg.Button('Exit')]
     ]
     window = sg.Window('Patrolling Emission in China', layout, size=(330, 120))
     event, values = window.read()
+    
     if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
         exit()
-    global airp
+
     airp = values['-type-']
-    global city
     city = values['-city-']
+
+    # close selection window and draw graph
     window.close()
-    create_graph()
+    create_graph(city, airp)
 
 
 # Uses matplotlib to create graphs using user input and data files.
-def create_graph():
-    plt.clf()
+def create_graph(city, airp):
     if city == "All":
-        i = 0
-        while i < 12:
-            global cityname
-            cityname = selection[i + 1]
-            x_axis = files[i]['No']
-            y_axis = files[i][airp]
-            plt.stem(x_axis, y_axis, markerfmt=" ")
-            plt.xlabel("Hours since March 1st 2013")
-            plt.ylabel(airp)
-            create_all_graphs_gui()
+
+        for i in  range(1, 13):
+
+            cityname = selection[i]
+
+            plot = make_graph(cityname, airp)
+
+            create_all_graphs_gui(plot, cityname, airp)
             plt.clf()
-            i += 1
-            if i == 12:
-                exit()
     else:
-        x_axis = file1['No']
-        y_axis = file1[airp]
-        plt.stem(x_axis, y_axis, markerfmt=" ")
-        plt.xlabel("Hours since March 1st 2013")
-        plt.ylabel(airp)
-        create_graph_gui()
+
+        plot = make_graph(city, airp)
+
+        create_graph_gui(plot, city, airp)
         plt.clf()
 
+# creates a pyplot graph given a ciy's name and air pollutant
+def make_graph(city, airp): 
+
+    file = pd.read_csv(f'Graphdata/PRSA_Data_{city}_20130301-20170228.csv')
+
+    x_axis = file['No']
+    y_axis = file[airp]
+
+    plt.stem(x_axis, y_axis, markerfmt=" ")
+    plt.xlabel("Hours since March 1st 2013")
+    #TODO: figure out how to format this so that exponent is superscript
+    plt.ylabel(f'{airp} (ug / m^3)')
+
+    return plt.gcf()
 
 # Uses the created matplotlib graphs to create a GUI that visualizes the data of all the cities using PySimpleGUI.
-def create_all_graphs_gui():
-    fig = plt.gcf()
+def create_all_graphs_gui(fig, cityname, airp):
+
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
+
     layout = [[sg.Text(f"{cityname}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
               [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
               [sg.Button('Back', size=(4, 2)), sg.Button('Next', pad=((figure_w / 2.4, 0), 2), size=(4, 2)),
@@ -99,6 +97,7 @@ def create_all_graphs_gui():
     while event:
         if event == 'Back':
             window.close()
+            plt.clf()
             del window
             main()
             break
@@ -110,8 +109,8 @@ def create_all_graphs_gui():
 
 
 # Uses the created matplotlib graphs to create a GUI that visualizes the data of the inputted city using PySimpleGUI.
-def create_graph_gui():
-    fig = plt.gcf()
+def create_graph_gui(fig, city, airp):
+#    fig = plt.gcf()
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
     layout = [[sg.Text(f"{city}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
               [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
@@ -123,6 +122,7 @@ def create_graph_gui():
     while event:
         if event == 'Back':
             window.close()
+            plt.clf()
             del window
             main()
             break
@@ -132,6 +132,7 @@ def create_graph_gui():
 
 # Used within create_graph_gui() and create_all_graph_gui() to draw the graphs onto the GUI using PySimpleGUI.
 def draw_figure(canvas, figure):
+
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
@@ -139,4 +140,5 @@ def draw_figure(canvas, figure):
 
 # Runs the program by calling the main() function.
 if __name__ == '__main__':
+    
     main()
