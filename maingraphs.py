@@ -7,16 +7,11 @@ import pandas as pd
 # Selects a PySimpleGUI theme.
 sg.theme('DarkTeal2')
 
+
+
 # Creates a GUI that accepts user input using PySimpleGUI.
 def main():
 
-    # Initialize neccessary lists
-    selection = (
-            'All', 'Aotizhongxin', 'Changping', 'Dingling', 'Dongsi', 'Guanyuan',
-            'Gucheng', 'Huairou', 'Nongzhanguan', 'Shunyi', 'Tiantan', 'Wanliu', 
-            'Wanshouxigong'
-            )
-    types = ('SO2', 'NO2', 'CO', 'O3')
 
     width = max(map(len, selection)) + 1
     matplotlib.use('TkAgg')
@@ -86,47 +81,67 @@ def create_all_graphs_gui(fig, cityname, airp):
 
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
 
-    layout = [[sg.Text(f"{cityname}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
-              [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
-              [sg.Button('Back', size=(4, 2)), sg.Button('Next', pad=((figure_w / 2.4, 0), 2), size=(4, 2)),
-               sg.Button('Exit', pad=((figure_w / 2.57, 0), 2), size=(4, 2))]],
+    layout = [
+                [sg.Text(f"{cityname}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
+
+                [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
+
+                [sg.Button('Back', size=(4, 2)),
+                 sg.Button('Next', pad=((figure_w / 2.4, 0), 2), size=(4, 2)),
+                 sg.Button('Exit', pad=((figure_w / 2.57, 0), 2), size=(4, 2))]
+             ]
+
     window = sg.Window('Air Pollution', layout, force_toplevel=True,
                        finalize=True, enable_close_attempted_event=True)
     draw_figure(window['canvas'].TKCanvas, fig)
     event, values = window.read()
+
     while event:
+
         if event == 'Back':
             window.close()
             plt.clf()
             del window
             main()
             break
+
         if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
             exit()
+
         if event == 'Next':
+            plt.clf()
             window.close()
             break
-
 
 # Uses the created matplotlib graphs to create a GUI that visualizes the data of the inputted city using PySimpleGUI.
 def create_graph_gui(fig, city, airp):
-#    fig = plt.gcf()
+
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
-    layout = [[sg.Text(f"{city}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
-              [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
-              [sg.Button('Back', size=(4, 2)), sg.Button('Exit', pad=(((figure_w / 1.152), 0), 3), size=(4, 2))]]
+
+    layout = [
+                [sg.Text(f"{city}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
+
+                [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
+
+                [sg.Button('Back', size=(4, 2)),
+                 sg.Button('Exit', pad=(((figure_w / 1.152), 0), 3), size=(4, 2))]
+            ]
+
     window = sg.Window('Air Pollution', layout, force_toplevel=True,
                        finalize=True, enable_close_attempted_event=True)
     draw_figure(window['canvas'].TKCanvas, fig)
     event, values = window.read()
+
     while event:
+
         if event == 'Back':
             window.close()
             plt.clf()
             del window
             main()
             break
-        if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
+
+        elif event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
             exit()
 
 
@@ -140,5 +155,15 @@ def draw_figure(canvas, figure):
 
 # Runs the program by calling the main() function.
 if __name__ == '__main__':
+
+    # Initialize neccessary lists
+    global selection
+    selection = (
+            'All', 'Aotizhongxin', 'Changping', 'Dingling', 'Dongsi', 'Guanyuan',
+            'Gucheng', 'Huairou', 'Nongzhanguan', 'Shunyi', 'Tiantan', 'Wanliu', 
+            'Wanshouxigong'
+            )
+    global types
+    types = ('SO2', 'NO2', 'CO', 'O3')
     
     main()
