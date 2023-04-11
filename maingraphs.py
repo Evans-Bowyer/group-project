@@ -3,15 +3,14 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
+import os
 
 # Selects a PySimpleGUI theme.
 sg.theme('DarkTeal2')
 
 
-
 # Creates a GUI that accepts user input using PySimpleGUI.
-def main():
-
+def main_graph_gui():
 
     width = max(map(len, selection)) + 1
     matplotlib.use('TkAgg')
@@ -23,15 +22,19 @@ def main():
         [sg.Text('Select Air Pollutant:', size=(17, 1)),
          sg.Combo(types, size=(width, 5), enable_events=False, key='-type-')],
 
-        [sg.Text('Select City:', size=(17, 1)),
+        [sg.Text('Select Station:', size=(17, 1)),
          sg.Combo(selection, size=(width, 5), enable_events=False, key='-city-')],
 
-        [sg.Submit(), sg.Button('Exit')]
+        [sg.Button('Back', size=(4, 2)), sg.Submit(), sg.Button('Exit')]
     ]
     window = sg.Window('Patrolling Emission in China', layout, size=(330, 120))
     event, values = window.read()
     
     if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
+        exit()
+    if event == 'Back':
+        window.close()
+        os.system('connector.py')
         exit()
 
     airp = values['-type-']
@@ -46,7 +49,7 @@ def main():
 def create_graph(city, airp):
     if city == "All":
 
-        for i in  range(1, 13):
+        for i in range(1, 13):
 
             cityname = selection[i]
 
@@ -61,7 +64,8 @@ def create_graph(city, airp):
         create_graph_gui(plot, city, airp)
         plt.clf()
 
-# creates a pyplot graph given a ciy's name and air pollutant
+
+# creates a pyplot graph given a stations name and air pollutant
 def make_graph(city, airp): 
 
     file = pd.read_csv(f'Graphdata/PRSA_Data_{city}_20130301-20170228.csv')
@@ -71,18 +75,17 @@ def make_graph(city, airp):
 
     plt.stem(x_axis, y_axis, markerfmt=" ")
     plt.xlabel("Hours since March 1st 2013")
-    #TODO: figure out how to format this so that exponent is superscript
-    plt.ylabel(f'{airp} (ug / m^3)')
+    plt.ylabel(f'{airp} (ug / m\u00b3)')
 
     return plt.gcf()
+
 
 # Uses the created matplotlib graphs to create a GUI that visualizes the data of all the cities using PySimpleGUI.
 def create_all_graphs_gui(fig, cityname, airp):
 
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
-
     layout = [
-                [sg.Text(f"{cityname}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
+                [sg.Text(f"{cityname} Station's {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
 
                 [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
 
@@ -102,7 +105,7 @@ def create_all_graphs_gui(fig, cityname, airp):
             window.close()
             plt.clf()
             del window
-            main()
+            main_graph_gui()
             break
 
         if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
@@ -113,13 +116,14 @@ def create_all_graphs_gui(fig, cityname, airp):
             window.close()
             break
 
-# Uses the created matplotlib graphs to create a GUI that visualizes the data of the inputted city using PySimpleGUI.
+
+# Uses the created matplotlib graphs to create a GUI that visualizes the data of the inputted station using PySimpleGUI.
 def create_graph_gui(fig, city, airp):
 
     figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
 
     layout = [
-                [sg.Text(f"{city}'s {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
+                [sg.Text(f"{city} Station's {airp} emissions from 03/01/13 to 03/01/17", font='Any 18')],
 
                 [sg.Canvas(size=(figure_w, figure_h), key='canvas')],
 
@@ -138,7 +142,7 @@ def create_graph_gui(fig, city, airp):
             window.close()
             plt.clf()
             del window
-            main()
+            main_graph_gui()
             break
 
         elif event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':
@@ -153,7 +157,7 @@ def draw_figure(canvas, figure):
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
 
 
-# Runs the program by calling the main() function.
+# Runs the program by calling the main_graph_gui() function.
 if __name__ == '__main__':
 
     # Initialize neccessary lists
@@ -166,4 +170,4 @@ if __name__ == '__main__':
     global types
     types = ('SO2', 'NO2', 'CO', 'O3')
     
-    main()
+    main_graph_gui()
