@@ -24,7 +24,11 @@ def main():
             os.system('maingraphs.py')
             break
         if event == 'Map':
+            window.close()
+            del window
             os.system('intmap.py')
+            os.system('connector.py')
+            break
 
 if __name__ == '__main__':
     main()
