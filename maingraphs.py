@@ -34,7 +34,7 @@ def main_graph_gui():
         exit()
     if event == 'Back':
         window.close()
-        os.system('connector.py')
+        os.system('python connector.py')
         exit()
 
     airp = values['-type-']
