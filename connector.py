@@ -10,10 +10,10 @@ def main():
     layout = [
         [sg.Text(f"Select Data Visualization Type:")],
 
-        [sg.Button('Map', pad=(((14 / 2), 10), 3), size=(5, 2)),
-         sg.Button('Graph', pad=(((14 / 2), 0), 3), size=(5, 2))]
+        [sg.Button('Map', pad=((50, 10), 3), size=(5, 2)),
+         sg.Button('Graph', pad=((30 , 0), 3), size=(5, 2))]
     ]
-    window = sg.Window('', layout, size=(300, 150))
+    window = sg.Window('', layout, size=(275, 100))
     event, values = window.read()
     while event:
         if event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == 'Exit':

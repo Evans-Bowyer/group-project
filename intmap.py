@@ -25,7 +25,6 @@ def create_map():
     yr_ax.add_artist(yr_ax.xaxis)
     yr_ticks = range(2013, 2022)
     yr_ax.set_xticks(yr_ticks)
-
     back_ax = fig.add_axes([0.03, 0.09, 0.08, 0.05])
     back = Button(back_ax, "Back")
 
